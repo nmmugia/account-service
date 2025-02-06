@@ -37,13 +37,9 @@ This project implements a RESTful API for a simple banking account service, buil
 
 | Method | Endpoint            | Description                                      | Request Body                                    | Success Response (200/201)                      | Error Responses                                                                           |
 | ------ | ------------------- | ------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-
 | POST   | `/daftar`           | Register a new customer.                        | `{ "nama": "string", "nik": "string", "no_hp": "string" }` | `{ "code": 201, "status": "success", "message":"Account registration successful", "data": { "account_number": "string" } }`               | 400 (Bad Request - validation errors), 409 (Conflict - duplicate NIK/phone)           |
-
 | POST   | `/tabung`          | Deposit funds into an account.                  | `{ "no_rekening": "string", "nominal": number }` | `{ "code": 200, "status": "success", "message":"Deposit successful", "data": number (balance) }`        | 400 (Bad Request - validation), 404 (Not Found - account doesn't exist)                |
-
 | POST   | `/tarik`           | Withdraw funds from an account.                 | `{ "no_rekening": "string", "nominal": number }` |  `{ "code": 200, "status": "success", "message":"Withdrawal successful", "data": number(balance) }`       | 400 (Bad Request - validation/insufficient balance), 404 (Not Found - account)      |
-
 | GET    | `/saldo/{no_rekening}` | Get the balance of an account.                | *None*                                          | `{ "code": 200, "status": "success", "message": "Get balance successful", "data": number (balance) }` | 400 (Bad Request - invalid account number format), 404 (Not Found - account) |
 
 ## Technology Stack
