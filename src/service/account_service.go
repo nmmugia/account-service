@@ -13,11 +13,10 @@ import (
 )
 
 type AccountServices interface {
-	CreateAccount(c context.Context, req *model.CreateAccount) (*model.Account, error)
-	Deposit(c context.Context, req *model.DepositRequest) error
-	Withdraw(c context.Context, req *model.Withdrawal) error
-	GetBalance(c context.Context, id string) (*model.Account, error)
-	Mutation(c context.Context, req *model.Mutation) ([]*model.CashActivity, error) // You might not need this in the initial implementation
+	CreateAccount(c context.Context, req *model.CreateAccount) (*model.Account, *fiber.Error)
+	Deposit(c context.Context, req *model.DepositRequest) *fiber.Error
+	Withdraw(c context.Context, req *model.Withdrawal) *fiber.Error
+	GetBalance(c context.Context, id string) (*model.Account, *fiber.Error)
 }
 
 type AccountService struct {
@@ -41,7 +40,7 @@ var (
 	ErrInsufficientBalance  = errors.New("insufficient balance")
 )
 
-func (s *AccountService) CreateAccount(c context.Context, req *model.CreateAccount) (*model.Account, error) {
+func (s *AccountService) CreateAccount(c context.Context, req *model.CreateAccount) (*model.Account, *fiber.Error) {
 	// Validate the request struct
 	if err := s.Validate.Struct(req); err != nil {
 		return nil, fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -96,7 +95,7 @@ func (s *AccountService) CreateAccount(c context.Context, req *model.CreateAccou
 	return &newAccount, nil
 }
 
-func (s *AccountService) Deposit(c context.Context, req *model.DepositRequest) error {
+func (s *AccountService) Deposit(c context.Context, req *model.DepositRequest) *fiber.Error {
 	// Validate input
 	if err := s.Validate.Struct(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -145,7 +144,7 @@ func (s *AccountService) Deposit(c context.Context, req *model.DepositRequest) e
 	return nil
 }
 
-func (s *AccountService) Withdraw(c context.Context, req *model.Withdrawal) error {
+func (s *AccountService) Withdraw(c context.Context, req *model.Withdrawal) *fiber.Error {
 	// Validate input
 	if err := s.Validate.Struct(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
@@ -225,7 +224,7 @@ func (s *AccountService) Withdraw(c context.Context, req *model.Withdrawal) erro
 	return nil
 }
 
-func (s *AccountService) GetBalance(c context.Context, accountNumber string) (*model.Account, error) {
+func (s *AccountService) GetBalance(c context.Context, accountNumber string) (*model.Account, *fiber.Error) {
 	var account model.Account
 	if err := s.DB.WithContext(c).Where("account_number = ?", accountNumber).First(&account).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -235,12 +234,4 @@ func (s *AccountService) GetBalance(c context.Context, accountNumber string) (*m
 		return nil, fiber.NewError(fiber.StatusInternalServerError, "Database error")
 	}
 	return &account, nil
-}
-
-// Mutation -  Placeholder, as it's complex and needs more context
-func (s *AccountService) Mutation(c context.Context, req *model.Mutation) ([]*model.CashActivity, error) {
-	// Implement logic to fetch account mutations (transaction history).
-	// This typically involves querying the cash_activity table based on account ID and date range.
-	// You'll need to define the structure of the `req` parameter (e.g., date range, account ID).
-	return nil, fiber.NewError(fiber.StatusNotImplemented, "Mutation functionality not implemented yet")
 }

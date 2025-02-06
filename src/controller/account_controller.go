@@ -36,12 +36,12 @@ func NewAccountController(accountService service.AccountServices, validator *val
 func (ac *AccountController) Register(c *fiber.Ctx) error {
 	req := new(model.CreateAccount)
 	if err := c.BodyParser(req); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
+		return response.ErrorCustom(c, fiber.StatusBadRequest, err.Error(), "Invalid request body")
 	}
 
 	account, err := ac.AccountService.CreateAccount(c.Context(), req)
 	if err != nil {
-		return err
+		return response.Error(c, err, nil)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(response.SuccessWithData{
@@ -70,19 +70,19 @@ func (ac *AccountController) Deposit(c *fiber.Ctx) error {
 
 	err := ac.AccountService.Deposit(c.Context(), req)
 	if err != nil {
-		return err
+		return response.Error(c, err, nil)
 	}
 
 	account, err := ac.AccountService.GetBalance(c.Context(), req.AccountNumber)
 	if err != nil {
-		return err
+		return response.Error(c, err, nil)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response.SuccessWithData{
 		Code:    fiber.StatusOK,
 		Status:  "success",
 		Message: "Deposit successful",
-		Data:    map[string]interface{}{"balance": account.Balance},
+		Data:    map[string]interface{}{"saldo": account.Balance},
 	})
 }
 
@@ -104,19 +104,19 @@ func (ac *AccountController) Withdrawal(c *fiber.Ctx) error {
 
 	err := ac.AccountService.Withdraw(c.Context(), req)
 	if err != nil {
-		return err
+		return response.Error(c, err, nil)
 	}
 
 	account, err := ac.AccountService.GetBalance(c.Context(), req.AccountNumber)
 	if err != nil {
-		return err
+		return response.Error(c, err, nil)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response.SuccessWithData{
 		Code:    fiber.StatusOK,
 		Status:  "success",
 		Message: "Withdrawal successful",
-		Data:    map[string]interface{}{"balance": account.Balance},
+		Data:    map[string]interface{}{"saldo": account.Balance},
 	})
 }
 
@@ -133,20 +133,19 @@ func (ac *AccountController) GetBalance(c *fiber.Ctx) error {
 	accountNumber := c.Params("accountNumber")
 
 	// Convert accountNumber to uint
-	_, err := strconv.ParseUint(accountNumber, 10, 64)
-	if err != nil {
+	if _, err := strconv.ParseUint(accountNumber, 10, 64); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid account number")
 	}
 
 	account, err := ac.AccountService.GetBalance(c.Context(), accountNumber)
 	if err != nil {
-		return err
+		return response.Error(c, err, nil)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response.SuccessWithData{
 		Code:    fiber.StatusOK,
 		Status:  "success",
 		Message: "Get balance successful",
-		Data:    map[string]interface{}{"balance": account.Balance},
+		Data:    map[string]interface{}{"saldo": account.Balance},
 	})
 }
