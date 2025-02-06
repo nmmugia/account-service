@@ -1,0 +1,402 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "account service API documentation",
+        "contact": {},
+        "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/v1",
+    "paths": {
+        "/daftar": {
+            "post": {
+                "description": "API for registering a new customer.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Register a new customer (Nasabah)",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessWithData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/health-check": {
+            "get": {
+                "description": "Check the status of services and database connections",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/example.HealthCheckResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/example.HealthCheckResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/saldo/{accountNumber}": {
+            "get": {
+                "description": "API for checking the balance of an account.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Get account balance (Saldo)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account number",
+                        "name": "accountNumber",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessWithData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/tabung": {
+            "post": {
+                "description": "API for depositing money into an account.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Deposit to an account (Tabung)",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DepositRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessWithData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/tarik": {
+            "post": {
+                "description": "API for withdrawing money from an account.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Withdraw from an account (Tarik)",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Withdrawal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.SuccessWithData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorDetails"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "example.HealthCheck": {
+            "type": "object",
+            "properties": {
+                "is_up": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Postgre"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "Up"
+                }
+            }
+        },
+        "example.HealthCheckError": {
+            "type": "object",
+            "properties": {
+                "is_up": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to connect to 'host=localhost user=postgres database=wrongdb': server error (FATAL: database \"wrongdb\" does not exist (SQLSTATE 3D000))"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Postgre"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "Down"
+                }
+            }
+        },
+        "example.HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "is_healthy": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Health check completed"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/example.HealthCheck"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "example.HealthCheckResponseError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "is_healthy": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Health check completed"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/example.HealthCheckError"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "error"
+                }
+            }
+        },
+        "model.CreateAccount": {
+            "type": "object",
+            "required": [
+                "nama",
+                "nik",
+                "no_hp"
+            ],
+            "properties": {
+                "nama": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "example": "John Doe"
+                },
+                "nik": {
+                    "type": "string",
+                    "example": "1234567890123456"
+                },
+                "no_hp": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "example": "081234567890"
+                }
+            }
+        },
+        "model.DepositRequest": {
+            "type": "object",
+            "required": [
+                "no_rekening",
+                "nominal"
+            ],
+            "properties": {
+                "no_rekening": {
+                    "type": "string",
+                    "example": "9876543210"
+                },
+                "nominal": {
+                    "type": "number",
+                    "example": 100000
+                }
+            }
+        },
+        "model.Withdrawal": {
+            "type": "object",
+            "required": [
+                "no_rekening",
+                "nominal"
+            ],
+            "properties": {
+                "no_rekening": {
+                    "type": "string",
+                    "example": "9876543210"
+                },
+                "nominal": {
+                    "type": "number",
+                    "example": 50000
+                }
+            }
+        },
+        "response.ErrorDetails": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "errors": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.SuccessWithData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

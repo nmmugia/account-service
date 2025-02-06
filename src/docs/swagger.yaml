@@ -1,0 +1,273 @@
+basePath: /v1
+definitions:
+  example.HealthCheck:
+    properties:
+      is_up:
+        example: true
+        type: boolean
+      name:
+        example: Postgre
+        type: string
+      status:
+        example: Up
+        type: string
+    type: object
+  example.HealthCheckError:
+    properties:
+      is_up:
+        example: false
+        type: boolean
+      message:
+        example: 'failed to connect to ''host=localhost user=postgres database=wrongdb'':
+          server error (FATAL: database "wrongdb" does not exist (SQLSTATE 3D000))'
+        type: string
+      name:
+        example: Postgre
+        type: string
+      status:
+        example: Down
+        type: string
+    type: object
+  example.HealthCheckResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      is_healthy:
+        example: true
+        type: boolean
+      message:
+        example: Health check completed
+        type: string
+      result:
+        items:
+          $ref: '#/definitions/example.HealthCheck'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  example.HealthCheckResponseError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      is_healthy:
+        example: false
+        type: boolean
+      message:
+        example: Health check completed
+        type: string
+      result:
+        items:
+          $ref: '#/definitions/example.HealthCheckError'
+        type: array
+      status:
+        example: error
+        type: string
+    type: object
+  model.CreateAccount:
+    properties:
+      nama:
+        example: John Doe
+        maxLength: 50
+        type: string
+      nik:
+        example: "1234567890123456"
+        type: string
+      no_hp:
+        example: "081234567890"
+        maxLength: 15
+        type: string
+    required:
+    - nama
+    - nik
+    - no_hp
+    type: object
+  model.DepositRequest:
+    properties:
+      no_rekening:
+        example: "9876543210"
+        type: string
+      nominal:
+        example: 100000
+        type: number
+    required:
+    - no_rekening
+    - nominal
+    type: object
+  model.Withdrawal:
+    properties:
+      no_rekening:
+        example: "9876543210"
+        type: string
+      nominal:
+        example: 50000
+        type: number
+    required:
+    - no_rekening
+    - nominal
+    type: object
+  response.ErrorDetails:
+    properties:
+      code:
+        type: integer
+      errors: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  response.SuccessWithData:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  title: account service API documentation
+  version: 1.0.0
+paths:
+  /daftar:
+    post:
+      consumes:
+      - application/json
+      description: API for registering a new customer.
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAccount'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.SuccessWithData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+      summary: Register a new customer (Nasabah)
+      tags:
+      - Accounts
+  /health-check:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of services and database connections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/example.HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/example.HealthCheckResponseError'
+      summary: Health Check
+      tags:
+      - Health
+  /saldo/{accountNumber}:
+    get:
+      description: API for checking the balance of an account.
+      parameters:
+      - description: Account number
+        in: path
+        name: accountNumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessWithData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+      summary: Get account balance (Saldo)
+      tags:
+      - Accounts
+  /tabung:
+    post:
+      consumes:
+      - application/json
+      description: API for depositing money into an account.
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.DepositRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessWithData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+      summary: Deposit to an account (Tabung)
+      tags:
+      - Accounts
+  /tarik:
+    post:
+      consumes:
+      - application/json
+      description: API for withdrawing money from an account.
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Withdrawal'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.SuccessWithData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorDetails'
+      summary: Withdraw from an account (Tarik)
+      tags:
+      - Accounts
+swagger: "2.0"

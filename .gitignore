@@ -1,0 +1,8 @@
+.env*
+!.env*.example
+
+tmp/
+
+lint.txt
+main
+bin

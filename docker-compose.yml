@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres:alpine
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      timeout: 20s
+      retries: 10
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - ./src/database/init:/docker-entrypoint-initdb.d
+    networks:
+      - account-network
+
+  account-service:
+    build: .
+    ports:
+      - ${APP_PORT}:3000
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    volumes:
+      - .:/usr/src/account-service
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - account-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "${APP_URL}/v1/health-check" ]
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  dbdata:
+
+
+networks:
+  account-network:
+    driver: bridge
