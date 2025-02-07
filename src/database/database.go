@@ -13,10 +13,10 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func Connect(dbHost, dbName string) *gorm.DB {
+func Connect() *gorm.DB {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
-		dbHost, config.DBUser, config.DBPassword, dbName, config.DBPort,
+		config.DBHost, config.DBUser, config.DBPassword, config.DBName, config.DBPort,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

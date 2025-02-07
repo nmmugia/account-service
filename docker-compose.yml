@@ -15,8 +15,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     volumes:
-      - dbdata:/var/lib/postgresql/data
-      - ./src/database/init:/docker-entrypoint-initdb.d
+      - dbpsql:/var/lib/postgresql/data
     networks:
       - account-network
 
@@ -27,22 +26,20 @@ services:
     depends_on:
       postgresdb:
         condition: service_healthy
-    volumes:
-      - .:/usr/src/account-service
     restart: on-failure
     env_file:
       - .env
     networks:
       - account-network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "${APP_URL}/v1/health-check" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/v1/health-check" ]
       interval: 40s
       timeout: 30s
       retries: 3
       start_period: 30s
 
 volumes:
-  dbdata:
+  dbpsql:
 
 
 networks:

@@ -18,7 +18,7 @@ var Log = utils.Log
 
 func init() {
 	// TODO: You can modify host and database configuration for tests
-	DB = database.Connect("localhost", "testdb")
+	DB = database.Connect()
 	router.Routes(App, DB)
 	App.Use(utils.NotFoundHandler)
 }

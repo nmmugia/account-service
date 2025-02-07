@@ -66,22 +66,20 @@ account-service/
 │   ├── database/       # Database connection setup
 │   ├── model/          # Data models (structs)
 │   ├── service/        # Business logic
-│   ├── validation/      # Request validation structs
+│   ├── validation/     # Request validation structs
 │   ├── main.go         # Main application entry point
 │   ├── go.mod
 │   ├── go.sum
 │   └── docs/           # Swagger documentation
 ├── test/
-│   ├── fixture/      # Example of data
+│   ├── fixture/        # Example of data
 │   ├── helper/         # Helper function for testing
-│   ├── integration/  # Integration tests
-│   └── unit/         # Unit tests
-│       └── service/
-│           └── account_service_test.go
-├── Dockerfile         # Dockerfile for building the service
+│   ├── integration/    # Integration tests
+│   └── unit/           # Unit tests
+├── Dockerfile          # Dockerfile for building the service
 ├── docker-compose.yml  # Docker Compose file for deployment
 └── docker-compose.test.yml # Docker Compose override for testing
-└── entrypoint.sh      # Entrypoint Script
+└── entrypoint.sh       # Entrypoint Script
 ```
 
 Setup and Deployment
@@ -91,38 +89,36 @@ Create a .env file in the project root. See .env.example.
 Or, set the required environment variables directly in your shell.
 Build and Run with Docker Compose (Recommended):
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 This command builds the Docker image (including running unit tests), starts the PostgreSQL and account-service containers, and applies database migrations.
 
-Run Integration Tests:
+Build and Run without Docker Compose:
 ```bash
-make docker-test
+go run src/main.go -port=3000 -host=localhost
 ```
-This will build an image, run the migrations, and then execute the integration tests inside a Docker container, against the test database.
 
-Run Locally (without Docker - for development):
-
-Make sure you have Go and PostgreSQL installed and configured.
-Set the necessary environment variables.
 
 Run migrations: 
 ```bash
-make migrate-up
+make migrate-docker-up
 ```
-Start the server: make start or go run src/main.go
-Run unit tests and generate coverage report:
 
+
+Run unit tests:
 
 ```bash
-make test-all-coverage
+make tests
 ```
-This will also generate coverage.html that contains the coverage report.
+
 
 Access the API:
 
 The API will be available at http://localhost:3000 (or the port you configured).
 Swagger UI: http://localhost:3000/swagger/index.html
+
+
+## ERD
 
 
 ## License

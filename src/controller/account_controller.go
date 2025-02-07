@@ -33,13 +33,13 @@ func NewAccountController(accountService service.AccountServices, validator *val
 // @Failure      400  {object}  response.ErrorDetails
 // @Failure      409  {object}  response.ErrorDetails
 // @Router       /daftar [post]
-func (ac *AccountController) Register(c *fiber.Ctx) error {
+func (accountController *AccountController) Register(c *fiber.Ctx) error {
 	req := new(model.CreateAccount)
 	if err := c.BodyParser(req); err != nil {
 		return response.ErrorCustom(c, fiber.StatusBadRequest, err.Error(), "Invalid request body")
 	}
 
-	account, err := ac.AccountService.CreateAccount(c.Context(), req)
+	account, err := accountController.AccountService.CreateAccount(c.Context(), req)
 	if err != nil {
 		return response.Error(c, err, nil)
 	}
@@ -62,18 +62,18 @@ func (ac *AccountController) Register(c *fiber.Ctx) error {
 // @Failure      400  {object}  response.ErrorDetails
 // @Failure      404  {object}  response.ErrorDetails
 // @Router       /tabung [post]
-func (ac *AccountController) Deposit(c *fiber.Ctx) error {
+func (accountController *AccountController) Deposit(c *fiber.Ctx) error {
 	req := new(model.DepositRequest)
 	if err := c.BodyParser(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	err := ac.AccountService.Deposit(c.Context(), req)
+	err := accountController.AccountService.Deposit(c.Context(), req)
 	if err != nil {
 		return response.Error(c, err, nil)
 	}
 
-	account, err := ac.AccountService.GetBalance(c.Context(), req.AccountNumber)
+	account, err := accountController.AccountService.GetBalance(c.Context(), req.AccountNumber)
 	if err != nil {
 		return response.Error(c, err, nil)
 	}
@@ -96,18 +96,18 @@ func (ac *AccountController) Deposit(c *fiber.Ctx) error {
 // @Failure      400  {object}  response.ErrorDetails
 // @Failure      404  {object}  response.ErrorDetails
 // @Router       /tarik [post]
-func (ac *AccountController) Withdrawal(c *fiber.Ctx) error {
+func (accountController *AccountController) Withdrawal(c *fiber.Ctx) error {
 	req := new(model.Withdrawal)
 	if err := c.BodyParser(req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	err := ac.AccountService.Withdraw(c.Context(), req)
+	err := accountController.AccountService.Withdraw(c.Context(), req)
 	if err != nil {
 		return response.Error(c, err, nil)
 	}
 
-	account, err := ac.AccountService.GetBalance(c.Context(), req.AccountNumber)
+	account, err := accountController.AccountService.GetBalance(c.Context(), req.AccountNumber)
 	if err != nil {
 		return response.Error(c, err, nil)
 	}
@@ -129,7 +129,7 @@ func (ac *AccountController) Withdrawal(c *fiber.Ctx) error {
 // @Failure      400  {object}  response.ErrorDetails
 // @Failure      404  {object}  response.ErrorDetails
 // @Router       /saldo/{accountNumber} [get]
-func (ac *AccountController) GetBalance(c *fiber.Ctx) error {
+func (accountController *AccountController) GetBalance(c *fiber.Ctx) error {
 	accountNumber := c.Params("accountNumber")
 
 	// Convert accountNumber to uint
@@ -137,7 +137,7 @@ func (ac *AccountController) GetBalance(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid account number")
 	}
 
-	account, err := ac.AccountService.GetBalance(c.Context(), accountNumber)
+	account, err := accountController.AccountService.GetBalance(c.Context(), accountNumber)
 	if err != nil {
 		return response.Error(c, err, nil)
 	}

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  account-service:
+    environment:
+      - RUN_INTEGRATION_TESTS=true
+      - TEST_DB_HOST=postgresdb
+      - TEST_DB_NAME=${DB_NAME}
+      - TEST_DB_USER=${DB_USER}
+      - TEST_DB_PASSWORD=${DB_PASSWORD}
+      - TEST_DB_PORT=${DB_PORT}
+    healthcheck:
+      test: ""
+    ports: []

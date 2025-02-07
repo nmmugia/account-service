@@ -7,6 +7,7 @@ import (
 	"account-service/src/router"
 	"account-service/src/utils"
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -32,8 +33,9 @@ func main() {
 	db := setupDatabase()
 	defer closeDatabase(db)
 	setupRoutes(app, db)
-
-	address := fmt.Sprintf("%s:%d", config.AppHost, config.AppPort)
+	appHost := flag.String("host", "localhost", "Application host")
+	appPort := flag.Int("port", 3000, "Application port")
+	address := fmt.Sprintf("%s:%d", *appHost, *appPort)
 
 	// Start server and handle graceful shutdown
 	serverErrors := make(chan error, 1)
@@ -55,7 +57,7 @@ func setupFiberApp() *fiber.App {
 }
 
 func setupDatabase() *gorm.DB {
-	db := database.Connect(config.DBHost, config.DBName)
+	db := database.Connect()
 	return db
 }
 
