@@ -27,10 +27,11 @@ This project implements a RESTful API for a simple banking account service, buil
 * **Transaction History (Chained):**
     * Each deposit and withdrawal creates a `cash_activity` record.
     * Uses `reference_id` to make a chained transaction history.
-* **Comprehensive Unit and Integration Tests:**
-	* Unit tests are implemented by using mock db.
-	* Integration tests are implemented by running the app and test with real database connection.
-* **Structured Logging:** uses logrus.
+* **Unit and Integration Tests:**
+  	![スクリーンショット 2025-02-07 080856](https://github.com/user-attachments/assets/3d9811d0-5147-4bba-8513-69ba30da7b2b)
+* **Structured Logging:** uses logrus and level log (WARNING, INFO, FATAL, ERROR.
+  ![log](https://github.com/user-attachments/assets/1d3f7378-7554-415f-a94a-6cc8cc9cad9f)
+
 * **Swagger Documentation:** API documentation auto generated.
 
 ## API Endpoints
@@ -119,6 +120,7 @@ Swagger UI: http://localhost:3000/swagger/index.html
 
 
 ## ERD
+![Untitled Diagram drawio](https://github.com/user-attachments/assets/c3f1ff53-456f-48ef-bfd8-a0262e9a7493)
 
 
 ## License
